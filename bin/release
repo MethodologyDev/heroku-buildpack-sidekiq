@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-require 'psych'
+require 'yaml'
 
 Dir.chdir ARGV.first
-config = Psych.load_file('sidekiq-workers.yml').to_hash
+config = YAML.load_file('sidekiq-workers.yml').to_hash
 
 command_template = config[:command_template] || "bundle exec %s"
 sidekiq_command  = config[:sidekiq_template] || "sidekiq -e $RACK_ENV -q %s"

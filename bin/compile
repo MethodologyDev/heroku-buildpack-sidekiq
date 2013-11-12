@@ -9,8 +9,6 @@ function indent() {
 }
 
 echo "-----> Found a sidekiq-workers.yml file"
-echo "-----> Ruby: $(ruby -v)"
-echo "-----> Loadpath: $(ruby -e 'puts $:.inspect')"
 
 # Bail early but noisily
 if [ ! -s $1/sidekiq-workers.yml ]; then
