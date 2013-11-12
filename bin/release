@@ -1,21 +1,2 @@
 #!/usr/bin/env ruby
-require 'yaml'
 
-Dir.chdir ARGV.first
-config = YAML.load_file('sidekiq-workers.yml').to_hash
-
-command_template = config[:command_template] || "bundle exec %s"
-sidekiq_command  = config[:sidekiq_template] || "sidekiq -e $RACK_ENV %s"
-
-proctypes = config[:dynos].map do |dyno, queues|
-  queue_string = queues.map {|queue_spec| "-q #{queue_spec * ','}"} * ' '
-
-  { dyno.to_s => command_template % (sidekiq_command % queue_string) }
-end.inject(:merge)
-
-result = {
-  "default_process_types" => proctypes,
-  "config_vars"           => {"SK_WORKER_TYPES" => proctypes.keys.size}
-}
-
-puts result.to_yaml

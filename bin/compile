@@ -1,17 +1,20 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ruby
+require 'yaml'
 
-function indent() {
-  c='s/^/       /'
-  case $(uname) in
-    Darwin) sed -l "$c";;
-    *)      sed -u "$c";;
-  esac
-}
+puts "-----> Found a sidekiq-workers.yml file"
 
-echo "-----> Found a sidekiq-workers.yml file"
+Dir.chdir ARGV.first
+config = YAML.load_file('sidekiq-workers.yml').to_hash
 
-# Bail early but noisily
-if [ ! -s $1/sidekiq-workers.yml ]; then
-  echo "sidekiq-workers.yml empty. Skipping." | indent
-  exit 0
-fi
+command_template = config[:command_template] || "bundle exec %s"
+sidekiq_command  = config[:sidekiq_template] || "sidekiq -e $RACK_ENV %s"
+
+proctypes = config[:dynos].map do |dyno, queues|
+  queue_string = queues.map {|queue_spec| "-q #{queue_spec * ','}"} * ' '
+
+  { dyno.to_s => command_template % (sidekiq_command % queue_string) }
+end.inject(:merge)
+
+File.open("Procfile", 'a') do |file|
+  file.write proctype.map {|dyno, command| "#{dyno}: #{command}\n"}.join
+end
