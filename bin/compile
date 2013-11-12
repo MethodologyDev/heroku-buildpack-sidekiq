@@ -16,5 +16,5 @@ proctypes = config[:dynos].map do |dyno, queues|
 end.inject(:merge)
 
 File.open("Procfile", 'a') do |file|
-  file.write proctype.map {|dyno, command| "#{dyno}: #{command}\n"}.join
+  file.write proctypes.map {|dyno, command| "#{dyno}: #{command}\n"}.join
 end
