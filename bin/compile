@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+function indent() {
+  c='s/^/       /'
+  case $(uname) in
+    Darwin) sed -l "$c";;
+    *)      sed -u "$c";;
+  esac
+}
+
+echo "-----> Found a sidekiq-workers.yml file"
+
+# Bail early but noisily
+if [ ! -s $1/sidekiq-workers.yml ]; then
+  echo "sidekiq-workers.yml empty. Skipping." | indent
+  exit 0
+fi
