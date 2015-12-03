@@ -4,7 +4,7 @@ require 'yaml'
 puts "-----> Found a sidekiq-workers.yml file"
 
 Dir.chdir ARGV.first
-config = YAML.load_file('sidekiq-workers.yml').to_hash
+config = YAML.load_file('config/sidekiq-workers.yml').to_hash
 
 command_template = config[:command_template] || "bundle exec %s"
 sidekiq_command  = config[:sidekiq_template] || "sidekiq -e $RACK_ENV %s"
