@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -f $1/sidekiq-workers.yml ]; then
+if [ -f $1/config/sidekiq-workers.yml ]; then
     echo "SidekiqWorkers"
     exit 0
 else
